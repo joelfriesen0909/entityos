@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glow & Flow | EntityOS · Glow & Flow</title>
+    <link rel="stylesheet" href="/fonts.css">
+    <link rel="stylesheet" href="/legacy.css">
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body class="theme-cyber">
+
+    <!-- HUD (Level & Currencies) -->
+    <div class="hud-top-left">
+        <div class="hud-box">
+            <div class="hud-lvl">
+                <span>Level</span>
+                <div id="disp-lvl">1</div>
+            </div>
+            <div class="hud-stats">
+                <div class="hud-currency c-task" title="Aufgabenmünzen (Verdient durch Listen)">
+                    <span class="icon-coin"></span> <span id="disp-coins-task">0</span>
+                </div>
+                <div class="hud-currency c-win" title="Gewinnchips (Verdient im Glücksspiel)">
+                    <span class="icon-coin"></span> <span id="disp-coins-win">0</span>
+                </div>
+                <div class="xp-bar-container">
+                    <div class="xp-bar-fill" id="disp-xp-bar"></div>
+                </div>
+                <div class="xp-text" id="disp-xp-txt">0 / 100 XP</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Free Reset (Milk) -->
+    <button class="btn-milk" onclick="resetSubstance()" title="Effekte entfernen (Kostenlos)" style="position: absolute; top: 120px; left: 30px; z-index: 100;">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.9 8.9l-1.7-1.1c-.2-.1-.5-.2-.7 0l-2.1 1.4-2.8-2.8c-.2-.2-.5-.3-.7-.1l-1.4 2.1c-.1.2 0 .5.1.7l1.1 1.7L9 15.5l-3.3-3.3c-.4-.4-1-.4-1.4 0l-2.8 2.8c-.4.4-.4 1 0 1.4L4.8 19.8c.4.4 1 .4 1.4 0l3.3-3.3 4.7 4.7c.2.2.5.2.7.1l1.7-1.1c.2-.1.3-.4.1-.7l-2.1-1.4 2.8-2.8c.2-.2.3-.5.1-.7L15.4 9l4.7-4.7c.4-.4.4-1 0-1.4L18.7 1.5c-.4-.4-1-.4-1.4 0l-2.8 2.8c-.2.2-.2.5-.1.7l1.4 2.1c.1.2.4.3.7.1l1.1-1.7 4.7 4.7c.4.4 1 .4 1.4 0l1.4-1.4c.4-.4.4-1 0-1.4z"/></svg>
+        Milch Trinken
+    </button>
+
+    <!-- Quick Mute Button -->
+    <div class="quick-mute" id="mute-btn" onclick="toggleMute()" title="Stummschalten">
+        <svg id="icon-speaker" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </div>
+
+    <!-- Top Menu Toggle -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <div></div><div></div><div></div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="side-menu glass-panel" id="side-menu">
+        <h3>System Tools</h3>
+
+        <div class="control-group">
+            <label>Aktiver Skin</label>
+            <select id="skin-selector" onchange="changeSkin(this.value)">
+                <option value="cyber">Cyber (Basis)</option>
+                <option value="clown" disabled>Psycho Clown (Lvl 2)</option>
+                <option value="robot" disabled>Mech-Bot (Lvl 3)</option>
+                <option value="vampire" disabled>Vampir (Lvl 4)</option>
+                <option value="nature" disabled>Natur (Lvl 5)</option>
+                <option value="alien" disabled>Alien (Lvl 6)</option>
+                <option value="ghost" disabled>Phantom (Lvl 7)</option>
+                <option value="pirate" disabled>Pirat (Lvl 8)</option>
+                <option value="ninja" disabled>Ninja (Lvl 9)</option>
+                <option value="wizard" disabled>Magier (Lvl 10)</option>
+            </select>
+            <button class="btn-cheat" onclick="addXP(100)">+100 XP (Cheat)</button>
+        </div>
+
+        <div class="control-group">
+            <label>Sprachausgabe</label>
+            <div class="vol-container">
+                <svg width="20" height="20" fill="#bbb" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+                <input type="range" id="vol-slider" min="0.1" max="1" step="0.1" value="1" onchange="testVolume()">
+                <svg width="24" height="24" fill="#bbb" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Schwerkraft-Modus</label>
+            <button class="toggle-btn" id="btn-gravity" onclick="toggleMod('gravity')">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: bottom;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v5h-2zm0 7h2v2h-2z"/></svg>
+                Aktivieren
+            </button>
+        </div>
+
+        <div class="control-group">
+            <label>Routine Verwaltung</label>
+            <button class="toggle-btn btn-danger" onclick="resetRoutine()" style="width:100%;">Alle Haken Löschen</button>
+        </div>
+
+        <div class="control-group">
+            <label style="color: var(--accent);">Spa-Modus (Minuten)</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="spa-minutes" value="15" min="1" max="60" style="width: 70px; text-align: center;">
+                <button class="toggle-btn" id="btn-spa" onclick="toggleSpaMode()" style="flex: 2;">Starten</button>
+            </div>
+            <p style="font-size: 0.8rem; color: #888; margin: 8px 0 0 0;">Startet Rauschen & Timer.</p>
+        </div>
+    </div>
+
+    <div class="app-wrapper">
+        <div class="app-container">
+
+            <div class="left-panel">
+                <p style="color: #888; margin: 0 0 15px 0; font-size: 0.95rem;">Tipp: Routine abhaken gibt Aufgabenmünzen & XP!</p>
+
+                <!-- FACE LIST -->
+                <div class="list-container">
+                    <div class="header-wrap" onclick="toggleAccordion('face')">
+                        <h2 class="editable-header" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Aufgaben</h2>
+                        <span class="accordion-arrow" id="arr-face"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+                    </div>
+                    <div class="progress-bg"><div class="progress-fill" id="prog-face"></div></div>
+                    <div class="list-wrap" id="wrap-face">
+                        <ul class="item-list" id="face-list"></ul>
+                    </div>
+                    <div class="add-box">
+                        <input type="text" id="face-input" placeholder="Neue Aufgabe (Enter)..." onkeypress="if(event.key==='Enter') addItem('face')">
+                        <button class="btn-add" onclick="addItem('face')"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+                    </div>
+                </div>
+
+                <!-- HAIR LIST -->
+                <div class="list-container">
+                    <div class="header-wrap" onclick="toggleAccordion('hair')">
+                        <h2 class="editable-header" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Pflegeroutine</h2>
+                        <span class="accordion-arrow" id="arr-hair"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span>
+                    </div>
+                    <div class="progress-bg"><div class="progress-fill" id="prog-hair"></div></div>
+                    <div class="list-wrap" id="wrap-hair">
+                        <ul class="item-list" id="hair-list"></ul>
+                    </div>
+                    <div class="add-box">
+                        <input type="text" id="hair-input" placeholder="Neue Zutat (Enter)..." onkeypress="if(event.key==='Enter') addItem('hair')">
+                        <button class="btn-add" onclick="addItem('hair')"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <header class="character-header">
+                    <div><span class="eyebrow">ENTITYOS / COMPANION</span><h1 id="character-name">Cyber</h1><p id="character-subtitle">Dein digitaler Begleiter</p></div>
+                    <button id="reset-level" class="quiet-button" title="Aktuelles Spiel und Bewegung zurücksetzen">↻ Reset</button>
+                </header>
+                <div class="character-tools"><button id="choose-character" class="quiet-button">Charakter wählen</button><button id="edit-character" class="quiet-button">Eigener Charakter</button></div>
+                <div id="spa-timer-display">15:00</div>
+
+                <!-- ACTIVITY OVERLAYS (Gambling & Shop) -->
+                <div id="activity-overlay">
+                    <button class="activity-close" onclick="closeActivity()">Zurück</button>
+                    <div class="activity-title" id="act-title">Titel</div>
+                    <div class="activity-desc" id="act-desc">Beschreibung</div>
+                    <div id="act-content"></div>
+                </div>
+
+                <!-- AI FACE -->
+                <div class="face-wrapper" id="face-wrap">
+                    <div class="speech-bubble" id="speech-bubble">System bereit.</div>
+
+                    <div class="face-container" id="bot-face">
+                        <div class="face-idle-wrap">
+                            <div class="face-base"></div>
+                            <div class="face-features" id="face-features">
+                                <div class="extra e2"></div>
+                                <div class="eye left"><div class="eyelid"></div><div class="pupil"></div></div>
+                                <div class="eye right"><div class="eyelid"></div><div class="pupil"></div></div>
+                                <div class="extra e1"></div>
+                                <div class="nose"></div>
+                                <div class="mouth" id="bot-mouth"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-strip"><span id="anger-label">Entspannt</span><meter id="anger-meter" min="0" max="100" low="35" high="70" optimum="0" value="0" aria-label="Wut-Level"></meter><span id="anger-value">0 %</span></div>
+                <p class="interaction-hint">Körper oder Hände greifen · Sanft ziehen</p>
+                <section id="voice-panel" class="voice-panel" aria-label="Gespräch mit deinem Charakter">
+                    <div class="voice-heading"><span class="status-dot" aria-hidden="true"></span><span id="voice-status" role="status">Bereit zum Gespräch</span><button id="stop-voice" class="quiet-button" disabled>Stopp</button></div>
+                    <div id="chat-log" role="log" aria-live="polite" aria-label="Gesprächsverlauf"></div>
+                    <form id="voice-form"><label class="sr-only" for="chat-input">Nachricht</label><input id="chat-input" autocomplete="off" maxlength="2000" placeholder="Sag etwas oder schreib mir …"><button class="send-button" aria-label="Nachricht senden" type="submit">↑</button></form>
+                    <div class="voice-actions"><button id="mic-btn" type="button" aria-pressed="false">● Mikrofon</button><span id="ai-config-status">KI-Verbindung prüfen …</span></div>
+                    <p id="voice-error" role="alert"></p>
+                    <details class="voice-privacy"><summary>Sprache & Datenschutz</summary>Die Spracherkennung kann Audio an den Dienst deines Browsers senden. Text und Gesprächskontext werden über deinen Server an OpenAI übermittelt. Chats bleiben in dieser Sitzung, Custom-Bilder lokal in deinem Browser. Spracheingabe benötigt Chrome/Edge sowie HTTPS oder localhost.</details>
+                </section>
+                <p id="app-notice" role="status"></p>
+
+                <!-- NAVIGATION BUTTONS (Games & Shop) -->
+                <div class="nav-controls">
+                    <button class="nav-btn" onclick="openGamblingMenu()">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                        <span>Glücksspiel</span>
+                    </button>
+                    <button class="nav-btn" onclick="openShop()">
+                        <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        <span>Schwarzmarkt</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- UNDO TOAST -->
+    <div id="undo-toast">
+        <span id="undo-text">Zutat gelöscht.</span>
+        <button id="undo-btn">Rückgängig</button>
+    </div>
+
+    <!-- LEVEL UP OVERLAY -->
+    <div id="lvl-up-overlay">
+        <h1 id="lvl-up-title">LEVEL UP!</h1>
+        <p id="lvl-up-desc">Du hast Level 2 erreicht!</p>
+        <button class="lvl-btn" onclick="closeLevelUp()">Weiter</button>
+    </div>
+
+    <dialog id="character-dialog" aria-labelledby="character-dialog-title">
+        <header class="dialog-heading"><div><span class="eyebrow">DEIN BEGLEITER</span><h2 id="character-dialog-title">Charaktere</h2></div><button class="quiet-button" data-close-dialog aria-label="Charakterauswahl schließen">✕</button></header>
+        <p class="dialog-copy">Jede Figur hat ihren eigenen Stil und Gesprächskontext. Deine freigeschalteten Skins bleiben verfügbar.</p>
+        <div id="character-grid" class="character-grid"></div>
+    </dialog>
+    <dialog id="editor-dialog" aria-labelledby="editor-title">
+        <header class="dialog-heading"><div><span class="eyebrow">CHARACTER STUDIO</span><h2 id="editor-title">Dein eigener Charakter</h2></div><button class="quiet-button" data-close-dialog aria-label="Editor schließen">✕</button></header>
+        <form id="character-form" class="editor-layout">
+            <div class="editor-preview-area"><div id="editor-preview" class="face-container" data-design="nova"><div class="face-idle-wrap"><div class="face-base"></div><div class="face-features"><div class="eye left"><div class="pupil"></div></div><div class="eye right"><div class="pupil"></div></div><div class="mouth"></div></div><div class="character-arm left"></div><div class="character-arm right"></div><div class="character-hand left"></div><div class="character-hand right"></div></div></div><strong id="preview-name">Mein Charakter</strong><span>Live-Vorschau · lokal gespeichert</span></div>
+            <div class="editor-fields">
+                <label for="custom-name">Name</label><input id="custom-name" maxlength="40" required>
+                <label for="custom-shape">Design</label><select id="custom-shape"><option value="nova">Nova · abgerundet</option><option value="milo">Milo · weich</option><option value="ghost">Ghost · schwebend</option><option value="pixel">Pixel · geometrisch</option><option value="onyx">Onyx · elegant</option></select>
+                <div class="color-fields"><label>Körperfarbe<input id="custom-color" type="color"></label><label>Akzent<input id="custom-accent" type="color"></label></div>
+                <label for="custom-size">Charaktergröße</label><input id="custom-size" type="range" min="0.65" max="1.1" step="0.05">
+                <label class="upload-label" for="character-upload">Bild hochladen · PNG, JPG, WebP bis 3 MB</label><input id="character-upload" type="file" accept="image/png,image/jpeg,image/webp">
+                <p class="field-help">Dein Bild wird proportional als Sprite angezeigt, mit animierten Händen. Transparenz bleibt erhalten. Keine automatische Gesichtserkennung oder Skelettanimation.</p>
+                <div id="image-controls" hidden><label for="custom-imageScale">Bildskalierung</label><input id="custom-imageScale" type="range" min="0.5" max="1.2" step="0.05"><label for="custom-imageX">Horizontale Position</label><input id="custom-imageX" type="range" min="-25" max="25" step="1"><label for="custom-imageY">Vertikale Position</label><input id="custom-imageY" type="range" min="-25" max="25" step="1"></div>
+                <button id="remove-image" class="quiet-button" type="button">Bild entfernen</button>
+                <p id="editor-error" role="alert"></p><button id="save-character" class="primary-button" type="submit">Speichern & aktivieren</button>
+            </div>
+        </form>
+    </dialog>
+    <script src="/legacy.js"></script>
+    <script type="module" src="/js/app.js"></script>
+</body>
+</html>
